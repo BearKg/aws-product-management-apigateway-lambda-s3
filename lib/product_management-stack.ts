@@ -47,7 +47,7 @@ export class ProductManagementStack extends cdk.Stack {
           PRODUCTS_TABLE_NAME: productsTable.tableName,
           PRODUCT_IMAGES_BUCKET_NAME: productImagesBucket.bucketName,
         },
-        timeout: cdk.Duration.seconds(60),
+        timeout: cdk.Duration.seconds(20),
       }
     );
 
@@ -59,7 +59,7 @@ export class ProductManagementStack extends cdk.Stack {
         handler: "handler",
         entry: path.join(__dirname, "../src/lambda/products/getAllProducts.ts"),
         environment: {
-          PRODUCT_TABLE_NAME: productsTable.tableName,
+          PRODUCTS_TABLE_NAME: productsTable.tableName,
         },
       }
     );
