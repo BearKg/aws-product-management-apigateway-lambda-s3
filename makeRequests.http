@@ -1,0 +1,17 @@
+@URL = https://bdlh570x87.execute-api.ap-southeast-1.amazonaws.com
+
+### Get All Products
+GET {{URL}}/products
+
+
+### Create Product
+POST {{URL}}/products
+Content-Type: application/json
+
+{
+    "name": "Product 1"
+}
+
+
+### Delete Product
+DELETE {{URL}}/products/1
