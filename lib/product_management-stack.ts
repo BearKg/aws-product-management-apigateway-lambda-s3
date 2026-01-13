@@ -7,7 +7,7 @@ import * as lambdaRuntime from "aws-cdk-lib/aws-lambda";
 import * as path from "path";
 import * as apigatewayv2 from "aws-cdk-lib/aws-apigatewayv2";
 import * as apigatewayv2_integrations from "aws-cdk-lib/aws-apigatewayv2-integrations";
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as iam from "aws-cdk-lib/aws-iam";
 
 export class ProductManagementStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -26,13 +26,33 @@ export class ProductManagementStack extends cdk.Stack {
 
     const productImagesBucket = new s3.Bucket(
       this,
-      `${this.stackName}-Product_images_Bucket`,
+      `${this.stackName}-Product_Images_Bucket`,
       {
         // need to be lowercase
-        bucketName: `${this.stackName.toLocaleLowerCase()}-images-vanhuynh-${new Date().getTime()}`,
+        bucketName: `${this.stackName.toLowerCase()}-images-bearkg`,
         removalPolicy: cdk.RemovalPolicy.DESTROY,
         autoDeleteObjects: true,
+        blockPublicAccess: new s3.BlockPublicAccess({
+          // Prevents setting public ACLs (Access Control Lists) on individual objects
+          blockPublicAcls: true,
+          // Allows bucket policies to be applied
+          blockPublicPolicy: false,
+          // Ignores any public ACLs that might be set on objects
+          ignorePublicAcls: true,
+          // Allows the bucket policy to grant public access
+          restrictPublicBuckets: false,
+        }),
       }
+    );
+
+    // Add bucket policy for fine_grained public access to product images only
+    productImagesBucket.addToResourcePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        principals: [new iam.AnyPrincipal()],
+        actions: ["s3:GetObject"],
+        resources: [`${productImagesBucket.bucketArn}/products/*`],
+      })
     );
 
     const createProductLambda = new NodejsFunction(
@@ -72,7 +92,7 @@ export class ProductManagementStack extends cdk.Stack {
         handler: "handler",
         entry: path.join(__dirname, "../src/lambda/products/deleteProduct.ts"),
         environment: {
-          PRODUCT_TABLE_NAME: productsTable.tableName,
+          PRODUCTS_TABLE_NAME: productsTable.tableName,
           PRODUCT_IMAGES_BUCKET_NAME: productImagesBucket.bucketName,
         },
       }

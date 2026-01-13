@@ -89,7 +89,7 @@ export const handler = async (
         })
       );
 
-      imageUrl = `https://${PRODUCT_IMAGES_BUCKET_NAME}.s3.amazonaws.com/${s3Key}`;
+      imageUrl = `https://${PRODUCT_IMAGES_BUCKET_NAME}.s3.ap-southeast-1.amazonaws.com/${s3Key}`;
       console.log("Image uploaded to S3 successfully", imageUrl);
     } catch (s3Error: any) {
       console.error("Error uploading image to S3:", s3Error);

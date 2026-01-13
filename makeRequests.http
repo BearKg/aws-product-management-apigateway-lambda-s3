@@ -14,4 +14,4 @@ Content-Type: application/json
 
 
 ### Delete Product
-DELETE {{URL}}/products/1
+DELETE {{URL}}/products/339ab4fb-f866-4bba-aeae-4a748cf73489 
